@@ -1,31 +1,99 @@
-import cv2
+import subprocess
+import sys
 
-camera = cv2.VideoCapture(0)
+from src.database import initialize_database
 
-if not camera.isOpened():
-    print("Could not open camera.")
-    exit()
 
-print("Camera started.")
-print("Press Q inside the camera window to quit.")
+# ==========================================
+# APPLICATION CONFIGURATION
+# ==========================================
 
-while True:
-    success, frame = camera.read()
+def print_header():
 
-    if not success:
-        print("Could not read frame from camera.")
-        break
+    print("\n")
+    print("=" * 50)
+    print("          FACE ATTENDANCE SYSTEM")
+    print("=" * 50)
 
-    # Mirror the camera preview
-    frame = cv2.flip(frame, 1)
 
-    cv2.imshow("Camera Test", frame)
+# ==========================================
+# RUN A PROJECT MODULE
+# ==========================================
 
-    # Press Q to close
-    if cv2.waitKey(1) & 0xFF == ord("q"):
-        break
+def run_module(module_name):
 
-camera.release()
-cv2.destroyAllWindows()
+    try:
 
-print("Camera closed.")
+        subprocess.run(
+            [sys.executable, "-m", module_name],
+            check=False
+        )
+
+    except KeyboardInterrupt:
+
+        print("\nOperation interrupted.")
+
+    except Exception as error:
+
+        print(f"\nError: {error}")
+
+    input("\nPress Enter to return to the main menu...")
+
+
+# ==========================================
+# MAIN MENU
+# ==========================================
+
+def main():
+
+    initialize_database()
+
+    while True:
+
+        print_header()
+
+        print("1. Register a Student")
+        print("2. Train Face Recognition Model")
+        print("3. Start Attendance Scanner")
+        print("4. View Attendance Reports")
+        print("5. Exit")
+
+        choice = input(
+            "\nChoose an option (1-5): "
+        ).strip()
+
+        if choice == "1":
+
+            run_module("src.register")
+
+        elif choice == "2":
+
+            run_module("src.train_model")
+
+        elif choice == "3":
+
+            run_module("src.attendance_scanner")
+
+        elif choice == "4":
+
+            run_module("src.reports")
+
+        elif choice == "5":
+
+            print("\nThank you for using Face Attendance System!")
+            break
+
+        else:
+
+            print("\nInvalid choice. Please select 1-5.")
+
+            input("Press Enter to continue...")
+
+
+# ==========================================
+# APPLICATION ENTRY POINT
+# ==========================================
+
+if __name__ == "__main__":
+
+    main()

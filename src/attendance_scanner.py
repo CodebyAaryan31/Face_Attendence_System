@@ -1,8 +1,14 @@
 import cv2
 import os
 import json
+
 from datetime import datetime
 
+from src.database import (
+    initialize_database,
+    save_attendance as save_to_database,
+    display_history
+)
 
 # ==========================================
 # PATHS
@@ -36,6 +42,8 @@ os.makedirs(
     ATTENDANCE_DIR,
     exist_ok=True
 )
+# Initialize SQLite database
+initialize_database()
 
 
 # ==========================================
@@ -505,3 +513,13 @@ print(
 print(
     f"File: {filepath}"
 )
+# ==========================================
+# SAVE ATTENDANCE TO SQLITE
+# ==========================================
+
+save_to_database(attendance)
+
+print("\nAttendance has been saved to SQLite.")
+
+# Display attendance history
+display_history()
